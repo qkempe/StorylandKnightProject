@@ -60,6 +60,62 @@ int pir_audio_init(PirAudioModule *module, int pin, const char *sound_file_path)
     return 0;
 }
 
+void play_sound_sequence(const char *file1, const char *file2) {
+    char command1[512];
+    char command2[512];
+
+    // NO '&' here: This makes the program wait for file1 to finish
+    printf("Playing first sound...\n");
+    snprintf(command1, sizeof(command1), "mpg123 -q %s", file1);
+    system(command1);
+
+    // This line won't run until the line above is totally done
+    printf("Playing second sound...\n");
+    snprintf(command2, sizeof(command2), "mpg123 -q %s &", file2);
+    system(command2);
+}
+void pir_audio_update(PirAudioModule *module) {
+    enum gpiod_line_value val = gpiod_line_request_get_value(module->line, module->pin_number);
+    int current_value = (val == GPIOD_LINE_VALUE_ACTIVE) ? 1 : 0;
+
+    if (current_value == 1 && module->previous_value == 0) {
+        printf("[EVENT] Motion detected! Playing audio sequence...\n");
+
+        char command[1024];
+        // This command says: 
+        // Play freesound, AND THEN (&&) play wings_of_freedom. 
+        // The '&' at the very end puts the WHOLE sequence in the background.
+        snprintf(command, sizeof(command), 
+                 "mpg123 -q %s && mpg123 -q wings_of_freedom-draw-sword-490796.mp3 &", 
+                 module->audio_path);
+        
+        system(command);
+
+        // A 5-second cooldown so it doesn't restart the sequence 
+        // while the audio is still playing.
+        sleep(5); 
+    }
+    module->previous_value = current_value;
+}
+/*void pir_audio_update(PirAudioModule *module) {
+    enum gpiod_line_value val = gpiod_line_request_get_value(module->line, module->pin_number);
+    int current_value = (val == GPIOD_LINE_VALUE_ACTIVE) ? 1 : 0;
+
+    if (current_value == 1 && module->previous_value == 0) {
+        printf("[PIR EVENT] Starting sequence...\n");
+
+        // 1. Play the "Intro" or "Alert" sound (Waits for it to finish)
+        system("mpg123 -q ./alert_signal.mp3");
+
+        // 2. Play the "Voice" or "Effect" sound (Moves on immediately)
+        system("mpg123 -q ./voice_message.mp3 &");
+
+        // Cooldown
+        sleep(2);
+    }
+    module->previous_value = current_value;
+}*/
+/*
 void pir_audio_update(PirAudioModule *module) {
     // In v2, we use gpiod_line_request_get_value
     enum gpiod_line_value val = gpiod_line_request_get_value(module->line, module->pin_number);
@@ -80,7 +136,7 @@ void pir_audio_update(PirAudioModule *module) {
     }
 
     module->previous_value = current_value;
-}
+} */
 
 void pir_audio_cleanup(PirAudioModule *module) {
     if (module->line) {

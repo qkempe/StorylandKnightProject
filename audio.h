@@ -21,3 +21,4 @@ void pir_audio_update(PirAudioModule *module);
 // Cleans up resources when the program exits
 void pir_audio_cleanup(PirAudioModule *module);
 
+void play_sound_sequence(const char *file1, const char *file2);
