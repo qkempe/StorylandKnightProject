@@ -85,15 +85,18 @@ void pir_audio_update(PirAudioModule *module) {
         // This command says: 
         // Play freesound, AND THEN (&&) play wings_of_freedom. 
         // The '&' at the very end puts the WHOLE sequence in the background.
-        snprintf(command, sizeof(command), 
+        /*snprintf(command, sizeof(command), 
                  "mpg123 -q %s && mpg123 -q wings_of_freedom-draw-sword-490796.mp3 &", 
-                 module->audio_path);
-        
+                 module->audio_path);*/
+        // Inside pir_audio_update
+		snprintf(command, sizeof(command), 
+         "mpg123 -q ./%s && mpg123 -q ./wings_of_freedom-draw-sword-490796.mp3 &", 
+         module->audio_path);
         system(command);
 
-        // A 5-second cooldown so it doesn't restart the sequence 
+        // A 6-second cooldown so it doesn't restart the sequence 
         // while the audio is still playing.
-        sleep(5); 
+        sleep(6); 
     }
     module->previous_value = current_value;
 }
