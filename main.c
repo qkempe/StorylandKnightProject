@@ -1,35 +1,59 @@
 #include <stdio.h>
 #include <unistd.h>
+#include <wiringPi.h>
+#include <softPwm.h>
 #include "audio.h"
 
-// Future modules:
-// #include "servo.h"
-// #include "led.h"
+#define SERVO1_PIN 18
+#define SERVO2_PIN 22
+
+#define SERVO_CLOSED 5
+#define SERVO_OPEN 15
+
+void init_servos() {
+    // this forces wiringpi to use standard BCM pin numbers
+    wiringPiSetupGpio(); 
+    softPwmCreate(SERVO1_PIN, SERVO_CLOSED, 200);
+    softPwmCreate(SERVO2_PIN, SERVO_CLOSED, 200);
+}
+
+void set_servos_open() {
+    softPwmWrite(SERVO1_PIN, SERVO_OPEN);
+    softPwmWrite(SERVO2_PIN, SERVO_OPEN);
+}
+
+void set_servos_closed() {
+    softPwmWrite(SERVO1_PIN, SERVO_CLOSED);
+    softPwmWrite(SERVO2_PIN, SERVO_CLOSED);
+}
 
 int main(void) {
     PirAudioModule pir;
-    
-    // We pass the FIRST filename here. 
-    // We will handle the second one inside the update function 
-    // or modify the path string to include both.
-    
-    // Let's assume GPIO 17 for the PIR sensor
+
     if (pir_audio_init(&pir, 17, "freesound_community-knight-spawn-97118.mp3") != 0) {
         fprintf(stderr, "Failed to initialize PIR sensor.\n");
         return 1;
     }
 
+    init_servos();
+
     printf("Robot System Online. Monitoring for motion...\n");
 
     while (1) {
-        // 1. Check PIR and handle the audio sequence
-        pir_audio_update(&pir);
+        if (pir_audio_update(&pir) == 1) {
+            // motion was detected and audio just started playing
+            
+            set_servos_open();
+            
+            // keep them open and block new motion for 3 seconds
+            delay(3000);
+            
+            set_servos_closed();
+            
+            // give the motors a split second to physically move back before looping
+            delay(500);
+        }
 
-        // 2. Placeholder for your future Servo/LED functions
-        // update_servos();
-        // update_leds();
-
-        // Small delay (50ms) to prevent high CPU usage
         usleep(50000);
     }
 

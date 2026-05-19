@@ -16,7 +16,7 @@ typedef struct {
 int pir_audio_init(PirAudioModule *module, int pin, const char *sound_file_path);
 
 // Non-blocking check function to be called inside your main loop
-void pir_audio_update(PirAudioModule *module);
+int pir_audio_update(PirAudioModule *module);
 
 // Cleans up resources when the program exits
 void pir_audio_cleanup(PirAudioModule *module);

@@ -74,31 +74,25 @@ void play_sound_sequence(const char *file1, const char *file2) {
     snprintf(command2, sizeof(command2), "mpg123 -q %s &", file2);
     system(command2);
 }
-void pir_audio_update(PirAudioModule *module) {
+int pir_audio_update(PirAudioModule *module) {
     enum gpiod_line_value val = gpiod_line_request_get_value(module->line, module->pin_number);
     int current_value = (val == GPIOD_LINE_VALUE_ACTIVE) ? 1 : 0;
+    
+    int triggered = 0;
 
     if (current_value == 1 && module->previous_value == 0) {
         printf("[EVENT] Motion detected! Playing audio sequence...\n");
-
+        
         char command[1024];
-        // This command says: 
-        // Play freesound, AND THEN (&&) play wings_of_freedom. 
-        // The '&' at the very end puts the WHOLE sequence in the background.
-        /*snprintf(command, sizeof(command), 
-                 "mpg123 -q %s && mpg123 -q wings_of_freedom-draw-sword-490796.mp3 &", 
-                 module->audio_path);*/
-        // Inside pir_audio_update
-		snprintf(command, sizeof(command), 
-         "mpg123 -q ./%s && mpg123 -q ./wings_of_freedom-draw-sword-490796.mp3 &", 
-         module->audio_path);
+        snprintf(command, sizeof(command), "mpg123 -q ./%s & mpg123 -q ./wings_of_freedom-draw-sword-490796.mp3 &", module->audio_path);
         system(command);
-
-        // A 6-second cooldown so it doesn't restart the sequence 
-        // while the audio is still playing.
-        sleep(6); 
+        
+        // removed the sleep(6) from here so it doesn't block the servos
+        triggered = 1; 
     }
+    
     module->previous_value = current_value;
+    return triggered;
 }
 /*void pir_audio_update(PirAudioModule *module) {
     enum gpiod_line_value val = gpiod_line_request_get_value(module->line, module->pin_number);
