@@ -96,7 +96,7 @@ void pir_audio_update(PirAudioModule *module) {
 
         // A 6-second cooldown so it doesn't restart the sequence 
         // while the audio is still playing.
-        sleep(3); 
+        sleep(6); 
     }
     module->previous_value = current_value;
 }
