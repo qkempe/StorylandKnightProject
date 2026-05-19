@@ -5,7 +5,7 @@
 // Structure to hold the state of our PIR hardware module
 typedef struct {
     struct gpiod_chip *chip;
-    struct gpiod_line *line;
+    struct gpiod_line_request *line;
     int pin_number;
     int previous_value;
     const char *audio_path;
