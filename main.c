@@ -4,14 +4,13 @@
 #include <softPwm.h>
 #include "audio.h"
 
-#define SERVO1_PIN 18
+#define SERVO1_PIN 24
 #define SERVO2_PIN 22
 
 #define SERVO_CLOSED 5
 #define SERVO_OPEN 15
 
 void init_servos() {
-    // this forces wiringpi to use standard BCM pin numbers
     wiringPiSetupGpio(); 
     softPwmCreate(SERVO1_PIN, SERVO_CLOSED, 200);
     softPwmCreate(SERVO2_PIN, SERVO_CLOSED, 200);
@@ -27,6 +26,12 @@ void set_servos_closed() {
     softPwmWrite(SERVO2_PIN, SERVO_CLOSED);
 }
 
+void relax_servos() {
+    // writing a 0 stops the software pulse completely to stop jitter
+    softPwmWrite(SERVO1_PIN, 0);
+    softPwmWrite(SERVO2_PIN, 0);
+}
+
 int main(void) {
     PirAudioModule pir;
 
@@ -36,12 +41,16 @@ int main(void) {
     }
 
     init_servos();
+    
+    printf("Syncing servos to starting position...\n");
+    set_servos_closed();
+    delay(1000);
+    relax_servos();
 
     printf("Robot System Online. Monitoring for motion...\n");
 
     while (1) {
         if (pir_audio_update(&pir) == 1) {
-            // motion was detected and audio just started playing
             
             set_servos_open();
             
@@ -50,8 +59,11 @@ int main(void) {
             
             set_servos_closed();
             
-            // give the motors a split second to physically move back before looping
+            // give the motors 500 milliseconds to physically move back
             delay(500);
+            
+            // turn off the signal so they sit quietly while waiting for motion
+            relax_servos();
         }
 
         usleep(50000);
