@@ -17,6 +17,11 @@ int main() {
         return 1;
     }
 
+    if (wiringPiSetup() == -1) {
+	    printf("setup wiringPi failed");
+	    return 1;
+    }
+
     init_servos();
     led_init();
 
@@ -31,7 +36,7 @@ int main() {
         if (pir_check_motion(&pir)) {
             printf("[EVENT] Visitor detected! Starting sequence...\n");
             
-            led_set_color(100, 0, 0); // set eyes to red
+            led_on(); // set eyes to red
             
             // Play audio
             play_audio_async("freesound_community-knight-spawn-97118.mp3");
@@ -46,7 +51,7 @@ int main() {
 
             // Relax motors to prevent overheating/jitter
             relax_servos();
-            led_set_color(0, 0, 0); //turn off eyes
+            led_off(); //turn off eyes
 
             // Wait out the PIR sensor high-time / give space before next trigger
             printf("Sequence finished. Entering cooldown period...\n");
