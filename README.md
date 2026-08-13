@@ -39,6 +39,7 @@ sudo apt install gcc mpg123 bluetooth bluez pipewire
 
 ## Service Command Management
 **Made with aliases in .bashrc**
+
 **Start:** systemctl --user start knight.service (Starts the executable in the current session)
 
 **Enable:** systemctl --user enable knight.service (Tell system to run the service when pi boots up)
