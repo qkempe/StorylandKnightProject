@@ -28,7 +28,17 @@ sudo apt update
 
 sudo apt install gcc mpg123 bluetooth bluez pipewire
 
+## Systemd User Service Setup
+1. create service in ~/.config/systemd/user/
+
+2. enable lingering: sudo loginctl enable-linger $USER
+
+3. run systemctl --user daemon-reload
+  
+4. run systemctl --user enable --now knight.service
+
 ## Service Command Management
+**Made with aliases in .bashrc**
 **Start:** systemctl --user start knight.service (Starts the executable in the current session)
 
 **Enable:** systemctl --user enable knight.service (Tell system to run the service when pi boots up)
