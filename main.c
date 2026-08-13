@@ -39,8 +39,8 @@ int main() {
             led_on(); // set eyes to red
             
             // Play audio
-            play_audio_async("freesound_community-knight-spawn-97118.mp3");
-            play_audio_async("wings_of_freedom-draw-sword-490796.mp3");
+            play_audio_async("/home/diego/StorylandKnightProject/freesound_community-knight-spawn-97118.mp3");
+            play_audio_async("/home/diego/StorylandKnightProject/wings_of_freedom-draw-sword-490796.mp3");
 
             // Perform movement
             set_servos_open();
