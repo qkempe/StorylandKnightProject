@@ -26,14 +26,16 @@ int main() {
 	    return 1;
     }
 
-    init_servos();
+    //init_servos();
     led_init();
+	printf("Leds initialized...\n");
 
-    printf("Syncing servos to starting position...\n");
-    set_servos_closed();
-    delay(1000);
-    relax_servos();
+    //printf("Syncing servos to starting position...\n");
+    //set_servos_closed();
+    //delay(1000);
+    //relax_servos();
 
+	delay(1000);
     printf("Storyland Exhibit Ready. Monitoring for visitors...\n");
 
     while (1) {
@@ -44,41 +46,36 @@ int main() {
             
             // Play one of the eight audios
 	    int num = rand() % 8;
+			num = 0;
+		int animation_delay = 5000;
 	    if (num == 0) {
             	play_audio_async("/home/diego/StorylandKnightProject/freesound_community-knight-spawn-97118.mp3");
-            	play_audio_async("/home/diego/StorylandKnightProject/wings_of_freedom-draw-sword-490796.mp3");
+            	animation_delay = 5000;
 	    } else if (num == 1) {
-		play_audio_async("/home/diego/StorylandKnightProject/phatphrogstudio-rpg-m-wizard-voice-greeting-player-no-ai-479595.mp3");
+				play_audio_async("/home/diego/StorylandKnightProject/phatphrogstudio-rpg-m-wizard-voice-greeting-player-no-ai-479595.mp3");
             	play_audio_async("/home/diego/StorylandKnightProject/wings_of_freedom-draw-sword-490796.mp3");
-	    } else if (num == 2) {
-	  	play_audio_async("/home/diego/StorylandKnightProject/phatphrogstudio-rpg-m-knight-voice-stand-ready-477946.mp3");
-            	play_audio_async("/home/diego/StorylandKnightProject/wings_of_freedom-draw-sword-490796.mp3");
-	    } else if (num == 3) {
-	  	play_audio_async("/home/diego/StorylandKnightProject/phatphrogstudio-rpg-m-knight-voice-attack-grunt-490291.mp3");
-            	play_audio_async("/home/diego/StorylandKnightProject/wings_of_freedom-draw-sword-490796.mp3");
-	    } else if (num == 4) {
-	  	play_audio_async("/home/diego/StorylandKnightProject/originalvo-medieval-gamer-voice-wisdom-will-come-my-friend-226577.mp3");
-            	play_audio_async("/home/diego/StorylandKnightProject/wings_of_freedom-draw-sword-490796.mp3");
-	    } else if (num == 5) {
-	  	play_audio_async("/home/diego/StorylandKnightProject/originalvo-medieval-gamer-voice-to-battle-226575.mp3");
-            	play_audio_async("/home/diego/StorylandKnightProject/wings_of_freedom-draw-sword-490796.mp3");
-	    } else if (num == 6) {
-	  	play_audio_async("/home/diego/StorylandKnightProject/originalvo-medieval-gamer-voice-the-day-is-ours-226579.mp3");
-            	play_audio_async("/home/diego/StorylandKnightProject/wings_of_freedom-draw-sword-490796.mp3");
-	    } else { // == 7
-	  	play_audio_async("/home/diego/StorylandKnightProject/originalvo-medieval-gamer-voice-darkness-hunts-us-what-youx27ve-learned-stay-226596.mp3");
-            	play_audio_async("/home/diego/StorylandKnightProject/wings_of_freedom-draw-sword-490796.mp3");
-	    }
+	    } 
 
             // Perform movement
-            set_servos_open();
-            delay(3000);
+            //set_servos_open();
+            //delay(3000);
 
-            set_servos_closed();
-            delay(500);
+            //set_servos_closed();
+            //delay(500);
+
+			//blinking
+			for (int i = 0; i < animation_delay; i += 20) {
+				delay(20);
+				if (i % 2000 < 1900) {
+					led_on();
+				}
+				else {
+					led_off();
+				}
+			}
 
             // Relax motors to prevent overheating/jitter
-            relax_servos();
+            //relax_servos();
             led_off(); //turn off eyes
 
             // Wait out the PIR sensor high-time / give space before next trigger
