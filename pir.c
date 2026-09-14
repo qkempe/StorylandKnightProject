@@ -1,8 +1,11 @@
 #include "pir.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <wiringPi.h>
 
 int pir_init(PirSensor *sensor, int pin) {
+    wiringPiSetupGpio();
+    
     sensor->pin_number = pin;
     sensor->previous_value = 0;
 
