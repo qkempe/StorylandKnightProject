@@ -21,16 +21,24 @@ void led_off() {
 }
 */
 
+int status = 0;
+
 void led_init() {
-	pinMode(LedPin, OUTPUT);    
+	pinMode(LEDPIN1, OUTPUT); 
+	pinMode(LEDPIN2, OUTPUT);   
+	led_off();
 }
 
 void led_on() {
-    digitalWrite(LedPin, LOW);
+    digitalWrite(LEDPIN1, LOW);
+	digitalWrite(LEDPIN2, LOW);
+	status = 1;
 }
 
 void led_off() {
-    digitalWrite(LedPin, HIGH);
+    digitalWrite(LEDPIN1, HIGH);
+	digitalWrite(LEDPIN2, HIGH);
+	status = 0;
 
 }
 
